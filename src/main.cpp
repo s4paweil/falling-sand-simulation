@@ -2,7 +2,7 @@
 
 #include "Grid.hpp"
 
-Color randomSandColor() {
+Color getSandColor(bool coloredSand, float& rainbowHue) {
     /*
     return Color{
         static_cast<unsigned char>(GetRandomValue(200,255)),
@@ -12,6 +12,16 @@ Color randomSandColor() {
     };
     */
 
+    if(coloredSand) {
+        rainbowHue += 80.0f * GetFrameTime();
+
+        if(rainbowHue >= 360.0f) {
+            rainbowHue -= 360.0f;
+        }
+
+        return ColorFromHSV(rainbowHue, 0.85f, 0.95f);
+    }
+    
     constexpr float hue = 42.0f;
 
     float saturation = static_cast<float>(GetRandomValue(55, 75) / 100.0f);
@@ -20,7 +30,7 @@ Color randomSandColor() {
     return ColorFromHSV(hue, saturation, value);
 }
 
-void paintSand(Grid& grid, int centerX, int centerY, int radius) {
+void paintSand(Grid& grid, int centerX, int centerY, int radius, Color color) {
     for(int dy = -radius; dy <= radius; dy++) {
         for(int dx = -radius; dx <= radius; dx++) {
             if(dx * dx + dy * dy > radius * radius) {
@@ -31,7 +41,7 @@ void paintSand(Grid& grid, int centerX, int centerY, int radius) {
             int y = centerY + dy;
 
             if(grid.isInside(x, y)) {
-                grid.setSand(x, y, randomSandColor());
+                grid.setSand(x, y, color);
             }
         }
     }
@@ -70,6 +80,9 @@ int main()
 
     int brushRadius = 1;
 
+    bool coloredSand = false;
+    float rainbowHue = 0.0f;
+
     Grid grid(
         screenWidth / cellSize,
         screenHeight / cellSize
@@ -96,6 +109,10 @@ int main()
             grid.clearGrid();
         }
 
+        if(IsKeyPressed(KEY_C)) {
+            coloredSand = !coloredSand;
+        }
+
         int key = GetCharPressed();
         while(key > 0) {
             if (key == '+') {
@@ -109,7 +126,9 @@ int main()
 
         // Handle mouse input
         if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-            paintSand(grid, mouseX, mouseY, brushRadius);
+            Color sandColor = getSandColor(coloredSand, rainbowHue);
+
+            paintSand(grid, mouseX, mouseY, brushRadius, sandColor);
         }
 
         // Update grid
@@ -159,6 +178,11 @@ int main()
         // Draw UI
         DrawText(TextFormat("[+]/[-] to increase/decrease Brushsize (%i)", brushRadius + 1), 10, 10, 20, DARKGRAY);
         DrawText("[R] to reset", 10, 30, 20, DARKGRAY);
+        if(coloredSand) {
+            DrawText("[C] to toggle colored sand (ON)", 10, 50, 20, ColorFromHSV(rainbowHue, 0.85f, 0.95f));
+        } else {
+            DrawText("[C] to toggle colored sand (OFF)", 10, 50, 20, DARKGRAY);
+        }
 
         EndDrawing();
     }
