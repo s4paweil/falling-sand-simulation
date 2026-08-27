@@ -5,6 +5,14 @@ This project was inspired by [Jason McGhee's Falling Sand Simulation](https://ja
 
 ## Building
 
+### Requirements
+
+- C++ compiler with C++17 support
+- `make`
+- `git`
+
+### Build
+
 Build the project:
 ```bash
 make

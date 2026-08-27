@@ -25,12 +25,11 @@ class Grid {
         bool isInside(int x, int y) const;
 
         Color getColor(int x, int y) const;
-
-        std::size_t index(int x, int y) const;
-
     private:
         int m_width;
         int m_height;
+
+        std::size_t index(int x, int y) const;
 
         std::vector<Cell> m_cells;
 };

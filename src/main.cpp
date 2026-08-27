@@ -3,15 +3,6 @@
 #include "Grid.hpp"
 
 Color getSandColor(bool coloredSand, float& rainbowHue) {
-    /*
-    return Color{
-        static_cast<unsigned char>(GetRandomValue(200,255)),
-        static_cast<unsigned char>(GetRandomValue(150,200)),
-        static_cast<unsigned char>(GetRandomValue(100,150)),
-        255
-    };
-    */
-
     if(coloredSand) {
         rainbowHue += 80.0f * GetFrameTime();
 
