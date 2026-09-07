@@ -1,67 +1,8 @@
 #include <raylib.h>
 
 #include "Grid.hpp"
-
-Color getSandColor(bool coloredSand, float& rainbowHue) {
-    if(coloredSand) {
-        rainbowHue += 80.0f * GetFrameTime();
-
-        if(rainbowHue >= 360.0f) {
-            rainbowHue -= 360.0f;
-        }
-
-        return ColorFromHSV(rainbowHue, 0.85f, 0.95f);
-    }
-    
-    constexpr float hue = 42.0f;
-
-    float saturation = static_cast<float>(GetRandomValue(55, 75) / 100.0f);
-    float value = static_cast<float>(GetRandomValue(65, 90) / 100.0f);
-
-    return ColorFromHSV(hue, saturation, value);
-}
-
-void paintSand(Grid& grid, int centerX, int centerY, int radius, Color color) {
-    for(int dy = -radius; dy <= radius; dy++) {
-        for(int dx = -radius; dx <= radius; dx++) {
-            if(dx * dx + dy * dy > radius * radius) {
-                continue;
-            }
-
-            int x = centerX + dx;
-            int y = centerY + dy;
-
-            if(grid.isInside(x, y)) {
-                grid.setSand(x, y, color);
-            }
-        }
-    }
-}
-
-void drawBrushPreview(const Grid& grid, int centerX, int centerY, int radius, int cellSize) {
-    for(int dy = -radius; dy <= radius; dy++) {
-        for(int dx = -radius; dx <= radius; dx++) {
-            if(dx * dx + dy * dy > radius * radius) {
-                continue;
-            }
-
-            int x = centerX + dx;
-            int y = centerY + dy;
-
-            if(!grid.isInside(x, y)) {
-                continue;
-            }
-
-            DrawRectangle(
-                x * cellSize,
-                y * cellSize,
-                cellSize,
-                cellSize,
-                LIGHTGRAY
-            );
-        }
-    }
-}
+#include "Renderer.hpp"
+#include "Sand.hpp"
 
 int main()
 {
@@ -145,28 +86,19 @@ int main()
         /*
         --------- RENDERING ---------
         */
+       
         BeginDrawing();
 
         ClearBackground(WHITE);
 
-        for(int y = 0; y < grid.height(); y++) {
-            for(int x = 0; x < grid.width(); x++) {
-                if(grid.hasSand(x, y)) {
-                    DrawRectangle(
-                        x * cellSize,
-                        y * cellSize,
-                        cellSize,
-                        cellSize,
-                        grid.getColor(x, y)
-                    );
-                }
-            }
-        }
+        // Draw grid
+        drawGrid(grid, cellSize);
 
         // Brush preview
         drawBrushPreview(grid, mouseX, mouseY, brushRadius, cellSize);
 
         // Draw UI
+        DrawFPS(screenWidth - 80, 10);
         DrawText(TextFormat("[+]/[-] to increase/decrease Brushsize (%i)", brushRadius + 1), 10, 10, 20, DARKGRAY);
         DrawText("[R] to reset", 10, 30, 20, DARKGRAY);
         if(coloredSand) {
