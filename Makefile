@@ -1,24 +1,4 @@
 
-
-PROJECT := falling-sand-simulation
-
-CXX := c++
-
-CXXFLAGS := -std=c++20 -Wall -Wextra -Wpedantic -O2
-CPPFLAGS := -Iinclude -Iexternal/raylib/src
-
-# Directories
-SCR_DIR := src
-BUILD_DIR := build
-OBJ_DIR := $(BUILD_DIR)/obj
-
-RAYLIB_DIR := external/raylib
-RAYLIB_LIB := $(RAYLIB_DIR)/src/libraylib.a
-
-# Source files
-SOURCES := 
-
-
 APP_NAME := falling-sand
 
 CXX := c++
